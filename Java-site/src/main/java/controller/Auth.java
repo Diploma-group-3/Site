@@ -1,25 +1,23 @@
 package controller;
 
 import jakarta.servlet.RequestDispatcher;
+import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import models.Company;
 import models.CompanyAdministraion;
 import services.AuthServise;
 import services.DocumentService;
+import services.EmailService;
+import services.LocationService;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLEncoder;
 import java.time.Instant;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
 import org.mindrot.jbcrypt.BCrypt;
 
 
@@ -45,22 +43,75 @@ public class Auth extends HttpServlet {
 			case "signup":
 				loadSignupPage(request, response);
 			break;
+			case "confirm":
+				String email = request.getParameter("email");
+				loadConfirmPage(request, response, email);
+				break;
+			case "signout":
+				doSignoutAction(request, response);
+				break;
 		}
 	}
 	
-	protected void loadSigninPage(HttpServletRequest request, HttpServletResponse response) 
+	private void loadSigninPage(HttpServletRequest request, HttpServletResponse response) 
 			throws ServletException, IOException {
 		request.setAttribute("title", "Вхід");
 		RequestDispatcher dispatcher = request.getRequestDispatcher("views/auth/signin_admin.jsp");
 		dispatcher.forward(request, response);
 	}
 
-	protected void loadSignupPage(HttpServletRequest request, HttpServletResponse response) 
+	private void loadSignupPage(HttpServletRequest request, HttpServletResponse response) 
 			throws ServletException, IOException {
 		request.setAttribute("title", "Реєстрація");
 		RequestDispatcher dispatcher = request.getRequestDispatcher("views/auth/signup_company.jsp");
 		dispatcher.forward(request, response);
 	}
+	private void loadConfirmPage(HttpServletRequest request, HttpServletResponse response, String email) throws ServletException, IOException {
+		String color = "";
+		String message = "";
+		boolean success = EmailService.confirmEmail("CompanyAdministrators", email);
+		
+		if(success) {
+			color = "green";
+			message = "Реєстрація равершена! Ваш акаунт активований!)";
+		}else {
+			color = "red";
+			message = "Не вдалося підтвердити реєстрацію акаунту";
+		}
+		
+		request.setAttribute("title", "- Підтвердження реєстрації");
+		request.setAttribute("color", color);
+		request.setAttribute("message", message);
+		RequestDispatcher disp = request.getRequestDispatcher("views/auth/confirm.jsp");
+		disp.forward(request, response);
+	}
+	
+	private void doSignoutAction(HttpServletRequest request, HttpServletResponse response)throws ServletException, IOException {
+ 		// 1
+ 		HttpSession ses = request.getSession();
+ 		String user = (String)request.getSession().getAttribute("user");
+ 		if(user != null) {
+ 			ses.invalidate();
+ 		}
+ 		
+ 		// 2
+ 		if(user == null){
+ 			Cookie[] cookies = request.getCookies();
+ 			if(cookies != null){
+ 				for(Cookie cookie: cookies){
+ 					if(cookie.getName().equals("user")){
+ 						cookie.setMaxAge(0);
+ 						response.addCookie(cookie);
+ 						break;
+ 					}
+ 				}
+ 			}
+ 		}
+ 		
+ 		// 3
+ 		response.sendRedirect("index.jsp");
+ 	}
+ 	
 	//==========================================================================================
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
@@ -79,7 +130,7 @@ public class Auth extends HttpServlet {
 		}
 	}
 	
-	protected void RegistrationCompany(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	private void RegistrationCompany(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
 		String name = request.getParameter("name");
 		String description = request.getParameter("description");
@@ -91,7 +142,7 @@ public class Auth extends HttpServlet {
 				description,
 				city,
 				street_hous,
-				GetLocationAddress(street_hous , city),
+				LocationService.GetLocationAddress(street_hous , city),
 				5,
 				Instant.now());
 		
@@ -111,12 +162,12 @@ public class Auth extends HttpServlet {
 		}
 	}
 	
-	protected void RegistrationAdminCompany(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		
+	private void RegistrationAdminCompany(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		String email = request.getParameter("email");
 		String hashPassw = BCrypt.hashpw(request.getParameter("pass1"), BCrypt.gensalt());
 		CompanyAdministraion newAdmin = new CompanyAdministraion(
 				request.getParameter("name"),
-				request.getParameter("email"),
+				email,
 				"0",
 				request.getParameter("phone"),
 				hashPassw,
@@ -124,6 +175,30 @@ public class Auth extends HttpServlet {
 				companyId);
 		
 		if(DocumentService.Add(newAdmin, "CompanyAdministrators")) {
+			
+			ServletContext context = getServletContext();
+			String host = context.getInitParameter("host");
+			String port = context.getInitParameter("port");
+			String user = context.getInitParameter("user");
+			String pass = context.getInitParameter("pass");
+			
+			String topic = "Підтвердження реєстрації на сайті Java-site";
+			String url = "http://localhost:8080/firebase-jsp-example/Auth?page=confirm&email=" + email;
+						
+			String html = "<h2>Ви успішно зареєструвалися на сайті Java-site</h2>";
+			html += "<hr/><h3>Для активації вашого акаунту потрібно перейти за посиланням:";
+			html += String.format( "<p><a href=\"%s\">Підтвердити реєстрацію</a></p>", url);
+			html += "</h3><hr/>";
+			try {	
+				
+				EmailService.sendEmail(host, port, user, pass, email, topic, html);
+				
+			}catch(Exception ex) {
+				request.setAttribute("title", "emailError");
+				request.setAttribute("messageError", ex.getMessage());
+				RequestDispatcher dispatcher = request.getRequestDispatcher("views/auth/page403.jsp");
+				dispatcher.forward(request, response);
+			}		
 			
 			request.setAttribute("title", "Підтвердження реєстрації");
 			request.setAttribute("message", "Адміністратор успішно доданий");
@@ -139,19 +214,30 @@ public class Auth extends HttpServlet {
 		}
 	}
 	
-	protected void AuthorizationAdminCompany(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	private void AuthorizationAdminCompany(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
 		String email = request.getParameter("login");
 		String hashPassw = request.getParameter("pass1");
-		//String remember = request.getParameter("remember");
+		String remember = request.getParameter("remember");
 		
 		CompanyAdministraion  admin = AuthServise.Authorization("CompanyAdministrators", email, hashPassw, CompanyAdministraion.class);
-		if(admin != null) {
+		if(!EmailService.checkConfirm("CompanyAdministrators", email)) {
 			
-			request.setAttribute("title", "Підтвердження реєстрації");
-			request.setAttribute("message", "Авторизація пройшла успішно)");
+			request.setAttribute("title", "Підтвердження email");
+			request.setAttribute("message", "Електронна пошта не підтверджена\n Підтвердіть електронну адресу і спробуйте ще раз");
 			RequestDispatcher dispatcher = request.getRequestDispatcher("views/auth/page_res.jsp");
 			dispatcher.forward(request, response);
+			
+		}
+		if(admin != null ) {
+			if(remember != null && remember.equals("yes")) {
+				Cookie cooki = new Cookie("user", email);
+				cooki.setMaxAge(10 * 24 * 60 * 60);
+				response.addCookie(cooki);
+			}
+			HttpSession session = request.getSession();
+			session.setAttribute("user", email);
+			response.sendRedirect("index.jsp");
 			
 		}else {
 			
@@ -162,45 +248,4 @@ public class Auth extends HttpServlet {
 		}
 	}
 	
-	//===Додаткові методи=======================================================================================================
-	
-	// Повернення координат ширини та висоти за адресою
-	private String GetLocationAddress(String street_hous, String city) {
-		String location = null;
-		
-		try {
-			
-			String url = "https://nominatim.openstreetmap.org/search?q=" + URLEncoder.encode(street_hous + "," + city, "UTF-8")  + "&format=json";
-			
-            // 1. Зтягнули дані з web-сервера
-            HttpURLConnection con = (HttpURLConnection) new URL(url).openConnection();
-            con.setRequestMethod("GET");
-            
-           
-            BufferedReader readLocation = new BufferedReader(new InputStreamReader(con.getInputStream()));
-            StringBuilder response = new StringBuilder();
-            String line;
-            while ((line = readLocation .readLine()) != null) {
-                response.append(line);
-            }
-            readLocation.close();
-            con.disconnect();
-            
-           // 2. Попарсили, дістали локацію
-            String jsonStr = response.toString();
-            JSONArray jsonArray = new JSONArray(jsonStr);
-            
-            if (jsonArray.length() > 0) {
-                JSONObject firstObject = jsonArray.getJSONObject(0);
-                location = firstObject.getString("lat") + "," + firstObject.getString("lon");
-                
-            } else {
-                return null;
-            }
-            
-        } catch (Exception e) {
-            return null;
-        }
-		return location;
-	}
 }

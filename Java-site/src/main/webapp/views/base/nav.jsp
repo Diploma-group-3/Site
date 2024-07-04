@@ -2,6 +2,25 @@
     pageEncoding="UTF-8"%>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
  	<title>Diploma - ${title}</title>
+ 	<% 
+	String user = (String)request.getSession().getAttribute("user");
+	if(user == null){
+		Cookie[] cookies = request.getCookies();
+		if(cookies != null){
+			for(Cookie cookie: cookies){
+				if(cookie.getName().equals("user")){
+					user = cookie.getValue();
+					break;
+				}
+			}
+		}
+	}
+	pageContext.setAttribute("user", user);
+%>
+
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+
+
 <nav class="navbar navbar-expand-md navbar-dark bg-dark mb-4">
   <div class="container">
     <a class="navbar-brand" href="index.jsp">Diploma</a>
@@ -33,12 +52,22 @@
           		</c:if>
           </a>
         </li>
+        <c:if test="${user == null}">
 	        <li class="nav-item">
 	          <a class="nav-link" href="Auth?page=signin">Вхід</a>
 	        </li>
 	        <li class="nav-item">
 	          <a class="nav-link" href="Auth?page=signup">Реєстрація компанії</a>
 	        </li>
+	     </c:if>
+	     <c:if test="${user != null}">
+	        <li class="nav-item">
+	          <a class="nav-link" href="Auth?page=profile">Профіль</a>
+	        </li>
+	        <li class="nav-item">
+	          <a class="nav-link" href="Auth?page=signout">Вихід</a>
+	        </li>
+	     </c:if>
       </ul>
     </div>
   </div>

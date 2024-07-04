@@ -10,31 +10,51 @@ version="6.0">
   <welcome-file-list>
     <welcome-file>index.jsp</welcome-file>
   </welcome-file-list>
-  <servlet>
-<display-name>Home</display-name>
-<servlet-name>Home</servlet-name>
-<servlet-class>controller.Home</servlet-class>
-</servlet>
-<servlet-mapping>
-<servlet-name>Home</servlet-name>
-<url-pattern>/Home</url-pattern>
-</servlet-mapping>
-<servlet>
-<display-name>Auth</display-name>
-<servlet-name>Auth</servlet-name>
-<servlet-class>controller.Auth</servlet-class>
-</servlet>
-<servlet-mapping>
-<servlet-name>Auth</servlet-name>
-<url-pattern>/Auth</url-pattern>
-</servlet-mapping>
-<servlet>
-<display-name>DownloadingFiles</display-name>
-<servlet-name>DownloadingFiles</servlet-name>
-<servlet-class>controller.DownloadingFiles</servlet-class>
-</servlet>
-<servlet-mapping>
-<servlet-name>DownloadingFiles</servlet-name>
-<url-pattern>/DownloadingFiles</url-pattern>
-</servlet-mapping>
+  
+  		<!-- Servlets  -->
+  	<servlet>
+		<display-name>Home</display-name>
+		<servlet-name>Home</servlet-name>
+		<servlet-class>controller.Home</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>Home</servlet-name>
+		<url-pattern>/Home</url-pattern>
+	</servlet-mapping>
+	<servlet>
+		<display-name>Auth</display-name>
+		<servlet-name>Auth</servlet-name>
+		<servlet-class>controller.Auth</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>Auth</servlet-name>
+		<url-pattern>/Auth</url-pattern>
+	</servlet-mapping>
+	<servlet>
+		<display-name>DownloadingFiles</display-name>
+		<servlet-name>DownloadingFiles</servlet-name>
+		<servlet-class>controller.DownloadingFiles</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>DownloadingFiles</servlet-name>
+		<url-pattern>/DownloadingFiles</url-pattern>
+	</servlet-mapping>
+	
+		<!-- Email Data  -->
+	<context-param>
+	    <param-name>host</param-name>
+	    <param-value>sandbox.smtp.mailtrap.io</param-value>
+	  </context-param>
+	  <context-param>
+	    <param-name>port</param-name>
+	    <param-value>2525</param-value>
+	  </context-param>
+	  <context-param>
+	    <param-name>user</param-name>
+	    <param-value>68b92c28426a93</param-value>
+	  </context-param>
+	  <context-param>
+	    <param-name>pass</param-name>
+	    <param-value>4abaee7f785c0e</param-value>
+	  </context-param>
 </web-app>

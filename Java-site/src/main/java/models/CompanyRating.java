@@ -2,7 +2,6 @@ package models;
 
 import java.time.Instant;
 
-import services.SortDocumentsInterface;
 
 public class CompanyRating {
 	
