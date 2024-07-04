@@ -241,6 +241,8 @@ public class Auth extends HttpServlet {
 			HttpSession session = request.getSession();
 			session.setAttribute("user", email);
 			session.setAttribute("companyId", admin.getConpanyId());
+			session.setAttribute("adminId", DocumentService.GetIdDocument("CompanyAdministrators", "email", email));
+			
 			response.sendRedirect("index.jsp");
 			
 		}else {
