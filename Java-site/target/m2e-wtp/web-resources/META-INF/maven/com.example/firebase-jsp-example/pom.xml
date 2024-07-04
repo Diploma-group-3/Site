@@ -54,8 +54,7 @@
 		    <artifactId>javax.mail</artifactId>
 		    <version>1.6.2</version>
 		</dependency>
-        
-       
+		
         	<!-- Servlet -->
         <dependency>
             <groupId>jakarta.servlet</groupId>
@@ -70,6 +69,7 @@
             <version>3.0.0</version>
             <scope>provided</scope>
         </dependency>
+        
         <dependency>
 			<groupId>org.glassfish.web</groupId>
 			<artifactId>jakarta.servlet.jsp.jstl</artifactId>

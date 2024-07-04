@@ -1,6 +1,7 @@
 package models;
 
 import java.time.Instant;
+import java.util.List;
 
 public class Company {
 	
@@ -11,13 +12,14 @@ public class Company {
 	private String geolocation;
 	private long rating;
 	private Instant datetime;
+	private List<String> arrPhoto;
 	
 	public Company() {}
 
 	
 	
 	public Company(String name, String description, String city, String street_hous, String geolocation, long rating,
-			Instant datetime) {
+			Instant datetime, List<String> arrPhoto) {
 		super();
 		this.name = name;
 		this.description = description;
@@ -26,8 +28,8 @@ public class Company {
 		this.geolocation = geolocation;
 		this.rating = rating;
 		this.datetime = datetime;
+		this.arrPhoto = arrPhoto;
 	}
-
 
 
 	public String getName() {
@@ -84,5 +86,17 @@ public class Company {
 
 	public void setDatetime(Instant datetime) {
 		this.datetime = datetime;
+	}
+
+
+
+	public List<String> getArrPhoto() {
+		return arrPhoto;
+	}
+
+
+
+	public void setArrPhoto(List<String> arrPhoto) {
+		this.arrPhoto = arrPhoto;
 	}
 }

@@ -36,7 +36,7 @@ public class DocumentService {
 		}
 	}
 	
-	// Повернення усіх відсортованих документів за ID, Бульбашкове сортування
+	// Повернення усіх документів за параметром та значенням
 	public static <T> List<T> GetAllDocumentsById(Class<T>  model, String colectionName, String fieldName, String value) {
 			
 		try (Firestore db = FirestoreProvider.Initialize()){
@@ -175,4 +175,52 @@ public class DocumentService {
 		}
 	}	
 			
+	// Повернення списку url фотографій
+	public static List<String> GetCompanyPhoto(String companyId) {
+			
+		// Сюди companyId прийде із сесії String companyId = (String)request.getSession().getAttribute("companyId");
+		try (Firestore db = FirestoreProvider.Initialize()) {
+				
+			@SuppressWarnings("unchecked")
+			List<String> photos = (List<String>)db.collection("Company").document(companyId).get().get().get("arrPhoto");
+				
+			return photos;
+				
+		} catch ( Exception e) {
+					 
+			return null;
+		}
+	}
+	
+	// Додавання до списку url фотографії компанії
+	public static boolean AddCompanyPhoto(String companyId, String urlPhoto) {
+				
+		try (Firestore db = FirestoreProvider.Initialize()) {
+					
+			List<String> photos = GetCompanyPhoto(companyId);
+			db.collection("Company").document(companyId).update("arrPhoto", photos.add(urlPhoto));
+					
+			return true;
+					
+		} catch ( Exception e) {
+						 
+			return false;
+		}
+	}
+	 
+	
+	// Додавання url фотографії
+	public static boolean AddAdminPhoto(String colectionName, String adminId, String urlPhoto) {
+					
+		try (Firestore db = FirestoreProvider.Initialize()) {
+						
+			db.collection(colectionName).document(adminId).update("photo", urlPhoto);
+						
+			return true;
+						
+		} catch ( Exception e) {
+							 
+			return false;
+		}
+	}
 }

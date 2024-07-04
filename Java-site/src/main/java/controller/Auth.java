@@ -17,6 +17,7 @@ import services.LocationService;
 
 import java.io.IOException;
 import java.time.Instant;
+import java.util.ArrayList;
 
 import org.mindrot.jbcrypt.BCrypt;
 
@@ -66,6 +67,7 @@ public class Auth extends HttpServlet {
 		RequestDispatcher dispatcher = request.getRequestDispatcher("views/auth/signup_company.jsp");
 		dispatcher.forward(request, response);
 	}
+	
 	private void loadConfirmPage(HttpServletRequest request, HttpServletResponse response, String email) throws ServletException, IOException {
 		String color = "";
 		String message = "";
@@ -144,7 +146,8 @@ public class Auth extends HttpServlet {
 				street_hous,
 				LocationService.GetLocationAddress(street_hous , city),
 				5,
-				Instant.now());
+				Instant.now(),
+				new ArrayList<String>());
 		
 		companyId = AuthServise.RegistrationCompany(admin);
 		if(companyId == null ) {
@@ -237,6 +240,7 @@ public class Auth extends HttpServlet {
 			}
 			HttpSession session = request.getSession();
 			session.setAttribute("user", email);
+			session.setAttribute("companyId", admin.getConpanyId());
 			response.sendRedirect("index.jsp");
 			
 		}else {

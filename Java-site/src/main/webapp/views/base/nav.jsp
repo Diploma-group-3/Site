@@ -2,7 +2,10 @@
     pageEncoding="UTF-8"%>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
  	<title>Diploma - ${title}</title>
- 	<% 
+ 	
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+ 	
+ <% 
 	String user = (String)request.getSession().getAttribute("user");
 	if(user == null){
 		Cookie[] cookies = request.getCookies();
@@ -17,9 +20,6 @@
 	}
 	pageContext.setAttribute("user", user);
 %>
-
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-
 
 <nav class="navbar navbar-expand-md navbar-dark bg-dark mb-4">
   <div class="container">
