@@ -59,24 +59,20 @@
 	    	<h2>Реєстрація компанії</h2>
 	    	<form id="signup-form" action="Auth?page=signup_company" method="post">
 	    		<div class="form-group">
-	    			<label for="login">Назва компанії:</label>
-	    			<input id="login" type="text" name="name" class="form-control" required>
-	    			<span id="login-err" class="error"></span>
+	    			<label for="name">Назва компанії:</label>
+	    			<input id="name" type="text" name="name" class="form-control" required>
 	    		</div>
 	    		<div class="form-group">
-	    			<label for="email">Опис:</label>
-	    			<input id="email" type="text" name="description" class="form-control" required>
-	    			<span id="email-err" class="error"></span>
+	    			<label for="description">Опис:</label>
+	    			<input id="description" type="text" name="description" class="form-control" required>
 	    		</div>
 	    		<div class="form-group">
-	    			<label for="phone">Місто:</label>
-	    			<input id="phone" type="text" name="city" class="form-control" required>
-	    			<span id="phone-err" class="error"></span>
+	    			<label for="city">Місто:</label>
+	    			<input id="city" type="text" name="city" class="form-control" required>
 	    		</div>
 	    		<div class="form-group">
-		    		<label for="pass1">Вулиця/будинок:</label>
-	    			<input id="pass1" type="text" name="street_hous" class="form-control" required>
-	    			<span id="pass1-err" class="error"></span>
+		    		<label for="street_hous">Вулиця/будинок:</label>
+	    			<input id="street_hous" type="text" name="street_hous" class="form-control" required>
 	    		</div>
 	    		<div class="form-group text-center">
 	    			<input id="submit" type="submit" value="Відправити" class="btn btn-success my-btn">

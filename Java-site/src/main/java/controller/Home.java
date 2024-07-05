@@ -7,13 +7,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
-
-import models.CompanyAdministraion;
-import models.ReservedPackageD;
-import services.DocumentService;
 
 public class Home extends HttpServlet {
 	private static final long serialVersionUID = 1L;
@@ -44,23 +38,5 @@ public class Home extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
 		doGet(request, response);
-	}
-	
-	// Метод для тестування
-	private CompanyAdministraion GetCompany(){
-		List<CompanyAdministraion> companyTut = new ArrayList<>();
-		CompanyAdministraion n = null;
-		//companyTut = CompanyAdministraionsService.Authorization("admin@gmail.com");
-		
-		//count = company.size();
-		for(CompanyAdministraion com: companyTut )
-		{
-			if(com.getEmail().compareTo("admin@gmail.com") == 0 ) {
-				
-				n = com;
-			}
-			break;
-		}
-		return n;
 	}
 }

@@ -60,9 +60,8 @@
 	    	<h2>Зареєструйте будь-ласка адміністратора компанії</h2>
 	    	<form id="signup-form" action="Auth?page=signup_company_admin" method="post">
 	    		<div class="form-group">
-	    			<label for="login">Імя та Прізвище:</label>
-	    			<input id="login" type="text" name="name" class="form-control" required>
-	    			<span id="login-err" class="error"></span>
+	    			<label for="name">Імя та Прізвище:</label>
+	    			<input id="name" type="text" name="name" class="form-control" required>
 	    		</div>
 	    		<div class="form-group">
 	    			<label for="email">Email:</label>
@@ -72,7 +71,6 @@
 	    		<div class="form-group">
 	    			<label for="phone">Телефон:</label>
 	    			<input id="phone" type="text" name="phone" class="form-control" required>
-	    			<span id="phone-err" class="error"></span>
 	    		</div>
 	    		<div class="form-group">
 		    		<label for="pass1">Пароль:</label>
@@ -102,7 +100,6 @@
 	</footer>
 	
 	<!-- Scripts -->
-	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 	<script src="static/js/validator.js"></script>
 	<script src="static/js/controler.js"></script>
 	<script src="static/js/validation.js"></script>
